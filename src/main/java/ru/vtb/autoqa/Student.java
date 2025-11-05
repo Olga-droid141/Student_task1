@@ -17,8 +17,11 @@ public class Student {
     private String name;
     private List<Integer> grades= new ArrayList<>();
 
+    private CheckGrade checker;
+
     public Student(String name) {
         this.name = name;
+        checker = new CheckGrade();
     }
 
     public void setName(String name) {
@@ -66,11 +69,7 @@ public class Student {
 
     @SneakyThrows
     public void addGrade(int grade) {
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpGet request = new HttpGet("http://localhost:5352/checkGrade?grade="+grade);
-        CloseableHttpResponse httpResponse = httpClient.execute(request);
-        HttpEntity entity = httpResponse.getEntity();
-        if(!Boolean.parseBoolean(EntityUtils.toString(entity))){
+        if (!checker.addGrade(grade)) {
             throw new IllegalArgumentException(grade + " is wrong grade");
         }
         grades.add(grade);
@@ -78,10 +77,6 @@ public class Student {
 
     @SneakyThrows
     public int raiting() {
-        CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpGet request = new HttpGet("http://localhost:5352/educ?sum="+grades.stream().mapToInt(x->x).sum());
-        CloseableHttpResponse httpResponse = httpClient.execute(request);
-        HttpEntity entity = httpResponse.getEntity();
-        return Integer.parseInt(EntityUtils.toString(entity));
+        return Integer.parseInt(EntityUtils.toString(checker.raiting(grades)));
     }
 }
