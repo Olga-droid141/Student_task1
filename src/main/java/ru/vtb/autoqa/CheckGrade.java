@@ -31,9 +31,10 @@ public class CheckGrade {
     }
 
     @SneakyThrows
-    public HttpEntity raiting(List<Integer> grades) {
+    public int raiting(List<Integer> grades) {
         HttpGet request = new HttpGet(RATE_PATH + grades.stream().mapToInt(x -> x).sum());
         CloseableHttpResponse httpResponse = httpClient.execute(request);
-        return httpResponse.getEntity();
+        HttpEntity entity = httpResponse.getEntity();
+        return Integer.parseInt(EntityUtils.toString(entity));
     }
 }

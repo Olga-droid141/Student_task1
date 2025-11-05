@@ -19,9 +19,9 @@ public class Student {
 
     private CheckGrade checker;
 
-    public Student(String name) {
+    public Student(String name, CheckGrade checker) {
         this.name = name;
-        checker = new CheckGrade();
+        this.checker = checker;
     }
 
     public void setName(String name) {
@@ -77,6 +77,6 @@ public class Student {
 
     @SneakyThrows
     public int raiting() {
-        return Integer.parseInt(EntityUtils.toString(checker.raiting(grades)));
+        return checker.raiting(grades);
     }
 }
