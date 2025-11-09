@@ -1,5 +1,14 @@
 package ru.vtb.autoqa;
 
+import lombok.SneakyThrows;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+
+import java.net.http.HttpClient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -8,8 +17,11 @@ public class Student {
     private String name;
     private List<Integer> grades= new ArrayList<>();
 
-    public Student(String name) {
+    private CheckGrade checker;
+
+    public Student(String name, CheckGrade checker) {
         this.name = name;
+        this.checker = checker;
     }
 
     public void setName(String name) {
@@ -22,13 +34,6 @@ public class Student {
 
     public List<Integer> getGrades() {
         return new ArrayList<>(grades);
-    }
-
-    public void addGrade(int grade) {
-        if (grade < 2 || grade > 5) {
-            throw new IllegalArgumentException(grade + " is wrong grade");
-        }
-        grades.add(grade);
     }
 
     @Override
@@ -60,5 +65,18 @@ public class Student {
     @Override
     public String toString() {
         return "Student{" + "name=" + name + ", marks=" + grades + '}';
+    }
+
+    @SneakyThrows
+    public void addGrade(int grade) {
+        if (!checker.addGrade(grade)) {
+            throw new IllegalArgumentException(grade + " is wrong grade");
+        }
+        grades.add(grade);
+    }
+
+    @SneakyThrows
+    public int raiting() {
+        return checker.raiting(grades);
     }
 }
